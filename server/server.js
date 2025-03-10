@@ -5,6 +5,9 @@ const cors = require("cors");
 const OpenAI = require("openai");
 require("dotenv").config({ path: "../.env" }); // Adjusted to load from parent directory
 
+// Import the database connection
+const db = require("./db");  // Import the database connection
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -97,5 +100,14 @@ async function fetchOpenAICompletionsStream(messages, callback) {
     console.error("Error fetching data from OpenAI API:", error);
   }
 }
+
+// Test Database Connection (For demonstration purposes, can be removed after testing)
+db.query("SELECT 1", (err, results) => {  // Simple test query
+  if (err) {
+    console.error("Error connecting to the database:", err);
+  } else {
+    console.log("Database connected successfully!");
+  }
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
