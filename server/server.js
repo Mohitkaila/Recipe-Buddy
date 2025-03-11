@@ -2,19 +2,33 @@
 
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const OpenAI = require("openai");
-require("dotenv").config({ path: "../.env" }); // Adjusted to load from parent directory
 
-// Import the database connection
-const db = require("./db");  // Import the database connection
+// Load environment variables
+dotenv.config({ path: "../.env" });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Enable CORS for all routes
+// Enable CORS and JSON parsing
 app.use(cors());
+app.use(express.json());
 
-// SSE Endpoint
+// Connect to MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log("Connected to MongoDB Atlas!"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Import authentication routes
+const authRoutes = require("./routes/auth");
+app.use("/api/auth", authRoutes);
+
+// SSE Recipe Generation Endpoint (Existing Logic)
 app.get("/recipeStream", (req, res) => {
   const { ingredients, cuisine, cookingTime, complexity, people, note } = req.query;
 
@@ -34,7 +48,7 @@ app.get("/recipeStream", (req, res) => {
   // Include the note if provided by the user
   const customNote = note ? `Please ensure the recipe meets the following requirement: ${note}.` : "";
 
-  // Update the prompt to let the AI consider the note if it exists
+  // OpenAI API call with structured prompt
   const prompt = `
     Generate a recipe in a structured plain text format with a suitable name for the dish based on the given ingredients, cuisine, and other details. The dish name should be in the native language of the cuisine (use correct characters, not transliteration), followed by its English translation in parentheses. The output should be formatted in a visually appealing way, with specific sections in bold as described below.
 
@@ -81,6 +95,7 @@ app.get("/recipeStream", (req, res) => {
   req.on("close", () => res.end());
 });
 
+// Function to Fetch AI Data
 async function fetchOpenAICompletionsStream(messages, callback) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -101,13 +116,5 @@ async function fetchOpenAICompletionsStream(messages, callback) {
   }
 }
 
-// Test Database Connection (For demonstration purposes, can be removed after testing)
-db.query("SELECT 1", (err, results) => {  // Simple test query
-  if (err) {
-    console.error("Error connecting to the database:", err);
-  } else {
-    console.log("Database connected successfully!");
-  }
-});
-
+// Start the server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

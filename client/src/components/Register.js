@@ -1,58 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Container, TextField, Button, Typography, Box } from "@mui/material";
 
-export default function Register({ onRegister }) {
-  const [name, setName] = useState('');
-  const [age, setAge] = useState('');
-  const [dietaryRestrictions, setDietaryRestrictions] = useState('');
-  const [preferences, setPreferences] = useState('');
+const Register = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate(); // 🔹 Used for navigation
 
-  const handleSubmit = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    onRegister({ name, age, dietaryRestrictions, preferences });
+    setError("");
+    setSuccess(false);
+    
+    try {
+      const res = await axios.post("http://localhost:3001/api/auth/register", {
+        username,
+        email,
+        password,
+      });
+
+      if (res.status === 201) {
+        setSuccess(true);
+        setTimeout(() => navigate("/login"), 2000); // 🔹 Redirect to login after 2s
+      } else {
+        setError("Unexpected response from server.");
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || "Registration failed. Please try again.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 bg-white rounded shadow-md">
-      <h2 className="text-xl font-bold mb-4">Register</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700">Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Age</label>
-        <input
-          type="number"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Dietary Restrictions</label>
-        <input
-          type="text"
-          value={dietaryRestrictions}
-          onChange={(e) => setDietaryRestrictions(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Preferences</label>
-        <input
-          type="text"
-          value={preferences}
-          onChange={(e) => setPreferences(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-        />
-      </div>
-      <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Register</button>
-    </form>
+    <Container maxWidth="sm">
+      <Box my={4}>
+        <Typography variant="h4" gutterBottom>Register</Typography>
+
+        {/* 🔹 Display success or error messages */}
+        {error && <Typography color="error">{error}</Typography>}
+        {success && <Typography color="primary">Registration successful! Redirecting to login...</Typography>}
+
+        <form onSubmit={handleRegister}>
+          <TextField
+            label="Username"
+            fullWidth
+            margin="normal"
+            required
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <TextField
+            label="Email"
+            type="email"
+            fullWidth
+            margin="normal"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            fullWidth
+            margin="normal"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          
+          {/* 🔹 Buttons: Register & Go to Login */}
+          <Box mt={2} display="flex" justifyContent="space-between">
+            <Button variant="contained" color="primary" type="submit">
+              Register
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={() => navigate("/login")}>
+              Go to Login
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Container>
   );
-}
+};
+
+export default Register;
