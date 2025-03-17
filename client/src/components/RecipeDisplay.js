@@ -35,7 +35,7 @@ const RecipeDisplay = ({ error, recipeText }) => {
           />
           <button
             onClick={generatePDF}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+            className="mt-4 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
           >
             Download as PDF
           </button>

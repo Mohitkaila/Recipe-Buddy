@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion"; // Import motion from framer-motion
 import image_hero from "../assets/hero.png";
 
+
 const RecipeCard = ({ onSubmit }) => {
   const [formData, setFormData] = useState({
     ingredients: "",
@@ -85,7 +86,7 @@ const RecipeCard = ({ onSubmit }) => {
       <div className='flex '>
           <button
               onClick={handleSubmit}
-              className="mt-6 w-1/2 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
+              className="mt-6 w-1/2 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
           >
               Generate Recipe
           </button>
@@ -94,7 +95,7 @@ const RecipeCard = ({ onSubmit }) => {
   );
 };
 
-const Hero = ({ onRecipeSubmit }) => {
+const Hero = ({ onRecipeSubmit, recipeCardRef }) => {
   return (
     <section>
       {/* Container */}
@@ -134,7 +135,9 @@ const Hero = ({ onRecipeSubmit }) => {
 
           </div>
           {/* Recipe Card Component */}
+          {/*<div ref={recipeCardRef}>*/}
           <RecipeCard onSubmit={onRecipeSubmit} />
+          {/*</div>*/}
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 
-const RecipeCard = ({ onSubmit }) => {
+const RecipeCard = forwardRef(({ onSubmit }, ref) => {
   const [formData, setFormData] = useState({
     ingredients: "",
     mealType: "",
@@ -31,7 +31,7 @@ const RecipeCard = ({ onSubmit }) => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <div ref={ref} className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Recipe Generator</h2>
       <div className="space-y-4">
         {[
@@ -88,6 +88,6 @@ const RecipeCard = ({ onSubmit }) => {
       </button>
     </div>
   );
-};
+});
 
 export default RecipeCard;

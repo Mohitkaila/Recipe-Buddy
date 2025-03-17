@@ -18,7 +18,7 @@ export default function Header({ onRegisterClick }) {
     <header className="bg-white">
       <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
         <div className="flex lg:flex-1">
-          <a href="#" className="-m-1.5 p-1.5">
+          <a href="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Recipe Buddy</span>
             <img
               alt="Recipe Buddy"
@@ -40,7 +40,7 @@ export default function Header({ onRegisterClick }) {
         </div>
         <div className="hidden lg:flex lg:gap-x-12">
           <a href="#" className="text-sm font-semibold text-gray-900">
-            Sign In
+            Saved Recipes
           </a>
           <a href="#" className="text-sm font-semibold text-gray-900">
             Contact

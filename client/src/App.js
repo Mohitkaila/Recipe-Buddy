@@ -89,43 +89,36 @@ function App() {
         <Header onRegisterClick={() => setShowRegister(true)} />
 
         <Routes>
-          {/* 🔹 If user is logged in, show the main home page */}
-          {user ? (
+          {/* 🔹 Home page is visible first */}
             <>
-              <Route path="/" element={
-                <>
-                  <HomePage user={user} onLogout={handleLogout} />
-                  <Hero onRecipeSubmit={handleRecipeSubmit} />
-                  <div ref={recipeDisplayRef}>
-                    <RecipeDisplay error={error} recipeText={recipeText} />
-                    {recipeText && (
-                      <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
-                        Save Recipe
-                      </button>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h2 className="text-xl font-bold mb-4">Saved Recipes</h2>
-                    <ul>
-                      {savedRecipes.map((recipe, index) => (
-                        <li key={index} className="mb-2 p-2 border border-gray-300 rounded">
-                          {recipe}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              } />
-              <Route path="*" element={<Navigate to="/" />} />
-            </>
-          ) : (
-            <>
-              {/* 🔹 If user is not logged in, show Login & Register */}
-              <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-              <Route path="/register" element={<Register onRegister={handleRegister} />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </>
-          )}
+            <Route path="/" element={
+              <>
+                <HomePage user={user} onLogout={handleLogout} />
+                <Hero onRecipeSubmit={handleRecipeSubmit} />
+                <div ref={recipeDisplayRef}>
+                  <RecipeDisplay error={error} recipeText={recipeText} />
+                  {recipeText && (
+                    <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-600 hover:bg-green-700 text-white rounded">
+                      Save Recipe
+                    </button>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h2 className="text-xl font-bold mb-4">Saved Recipes</h2>
+                  <ul>
+                    {savedRecipes.map((recipe, index) => (
+                      <li key={index} className="mb-2 p-2 border border-gray-300 rounded">
+                        {recipe}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            } />
+            <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess}/>}/>
+            <Route path="/register" element={<Register onRegister={handleRegister} />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </>
         </Routes>
       </div>
     </Router>
