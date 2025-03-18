@@ -17,10 +17,11 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("✅ Connected to MongoDB Atlas!"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -31,7 +32,7 @@ const recipeRoutes = require("./routes/recipes"); // ✅ Import Recipe Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/recipes", recipeRoutes); // ✅ Add Recipe Routes
 
-// SSE Recipe Generation Endpoint (Existing Logic)
+// SSE Recipe Generation Endpoint (Fixed Title Handling)
 app.get("/recipeStream", (req, res) => {
   const { ingredients, cuisine, cookingTime, complexity, people, note } = req.query;
 
@@ -51,14 +52,13 @@ app.get("/recipeStream", (req, res) => {
   // Include the note if provided by the user
   const customNote = note ? `Please ensure the recipe meets the following requirement: ${note}.` : "";
 
-  // OpenAI API call with structured prompt
+  // ✅ Updated OpenAI Prompt (Ensures Clear Title Extraction)
   const prompt = `
-    Generate a recipe in a structured plain text format with a suitable name for the dish based on the given ingredients, cuisine, and other details. The dish name should be in the native language of the cuisine (use correct characters, not transliteration), followed by its English translation in parentheses. The output should be formatted in a visually appealing way, with specific sections in bold as described below.
-
-    ${customNote}
-
+    Generate a recipe in a structured format. The first line **must** contain the dish name as follows:
+    **Recipe Title:** [Dish Name]
+    
     ---
-    **How to Make [Native Dish Name in Original Script] ([English Translation]) - ${cuisine} Style**
+    **Recipe Title:** [Native Dish Name] ([English Translation]) - ${cuisine} Style
 
     This recipe is for ${people} servings and takes around ${cookingTime}. Complexity: ${complexity}.
 
@@ -69,27 +69,28 @@ app.get("/recipeStream", (req, res) => {
     - Main Ingredients: ${ingredients}
 
     **Ingredients You’ll Need:**
-    - List each ingredient in a clear format, specifying quantities where possible.
+    - List each ingredient with clear formatting.
 
     **Step-by-Step Instructions:**
-    1. Provide each cooking step in a numbered format.
-    2. Include specific steps for cooking the primary ingredient (${ingredients.split(",")[0]}).
+    1. Provide clear step-by-step instructions.
 
     **Nutritional Summary (per serving):**
-    - Calories: [calories in kcal]
-    - Carbohydrates: [amount in grams]
-    - Proteins: [amount in grams]
-    - Fats: [amount in grams]
+    - Calories: [value]
+    - Carbohydrates: [value]
+    - Proteins: [value]
+    - Fats: [value]
 
     **Tips for a Perfect Dish:**
-    - Include helpful cooking tips, such as optimal flavor combinations or cooking techniques.
+    - Provide expert cooking tips.
 
     ---
-    The response should use bold headings as specified and be in plain text format. Avoid any markdown syntax or code blocks.
+    Ensure the recipe starts with "**Recipe Title:** [Dish Name]".
   `;
 
+  console.log("🔍 Sending Prompt to OpenAI:", prompt); // ✅ Debugging Log
+
   const messages = [
-    { role: "system", content: "You are a recipe assistant that provides structured recipes in plain text format with bold headings, including a nutritional summary per serving." },
+    { role: "system", content: "You are a recipe assistant that provides structured recipes in plain text format with bold headings." },
     { role: "user", content: prompt },
   ];
 
@@ -98,7 +99,7 @@ app.get("/recipeStream", (req, res) => {
   req.on("close", () => res.end());
 });
 
-// Function to Fetch AI Data
+// ✅ Function to Fetch AI Data and Debug Response
 async function fetchOpenAICompletionsStream(messages, callback) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -112,6 +113,7 @@ async function fetchOpenAICompletionsStream(messages, callback) {
     });
 
     for await (const chunk of completion) {
+      console.log("📝 AI Response Chunk:", chunk.choices[0].delta.content); // ✅ Debug AI Response
       callback(chunk);
     }
   } catch (error) {
