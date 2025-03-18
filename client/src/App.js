@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import RecipeDisplay from "./components/RecipeDisplay";
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import HomePage from "./components/HomePage";
-import Dashboard from "./components/Dashboard"; // ✅ Added Dashboard
-import Navbar from "./components/Navbar"; // ✅ Added Navbar
+import IntroPage from "./components/IntroPage"; // ✅ First page
+import TransitionPage from "./components/TransitionPage"; // ✅ New transition page
+import HomePage from "./components/HomePage";  // ✅ Futuristic UI page
+import Dashboard from "./components/Dashboard";
+import Navbar from "./components/Navbar";
 import "./App.css";
 
-function App() {
+function AppContent() {
   const [recipeData, setRecipeData] = useState(null);
   const [recipeText, setRecipeText] = useState('');
   const [error, setError] = useState(null);
@@ -20,6 +22,10 @@ function App() {
   const [showRegister, setShowRegister] = useState(false);
   const eventSourceRef = useRef(null);
   const recipeDisplayRef = useRef(null);
+
+  // ✅ Move `useLocation()` inside `Router`
+  const location = useLocation();
+  const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition"; 
 
   useEffect(() => () => closeEventStream(), []);
 
@@ -106,15 +112,21 @@ function App() {
   };
 
   return (
-    <Router>
-      <Navbar user={user} onLogout={handleLogout} /> {/* ✅ Navbar added */}
+    <>
+      {/* ✅ Show Navbar and Header ONLY if NOT on IntroPage or TransitionPage */}
+      {!isIntroOrTransition && <Navbar user={user} onLogout={handleLogout} />}
+      {!isIntroOrTransition && <Header onRegisterClick={() => setShowRegister(true)} />}
 
       <div className="bg-gray-100">
-        <Header onRegisterClick={() => setShowRegister(true)} />
-
         <Routes>
-          {/* ✅ Home Page (Accessible by both guests and users) */}
-          <Route path="/" element={
+          {/* ✅ Show the IntroPage first (without header/navbar) */}
+          <Route path="/" element={<IntroPage />} />
+
+          {/* ✅ Transition Page (shows animation before HomePage) */}
+          <Route path="/transition" element={<TransitionPage />} />
+
+          {/* ✅ Home Page after transition */}
+          <Route path="/home" element={
             <>
               <HomePage user={user} onLogout={handleLogout} />
               <Hero onRecipeSubmit={handleRecipeSubmit} />
@@ -144,6 +156,15 @@ function App() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
+    </>
+  );
+}
+
+// ✅ Wrap everything inside `Router` to avoid errors
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

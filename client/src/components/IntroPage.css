@@ -1,0 +1,61 @@
+/* Fullscreen background */
+.intro-container {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+    overflow: hidden;
+  }
+  
+  /* Background image */
+  .background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    filter: blur(2px); /* Slight blur effect */
+  }
+  
+  /* Overlay content */
+  .overlay-content {
+    position: absolute;
+    text-align: center;
+    color: white;
+    z-index: 2;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .overlay-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  .overlay-content p {
+    font-size: 1.5rem;
+    margin-bottom: 40px;
+  }
+  
+  /* Start Button */
+  .start-button {
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .start-button:hover {
+    background-color: #ff5733;
+    transform: scale(1.1);
+  }
+  
