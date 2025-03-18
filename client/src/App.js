@@ -5,12 +5,12 @@ import RecipeDisplay from "./components/RecipeDisplay";
 import Hero from "./components/Hero";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import IntroPage from "./components/IntroPage"; 
-import TransitionPage from "./components/TransitionPage"; 
-import HomePage from "./components/HomePage";  
+import IntroPage from "./components/IntroPage";
+import TransitionPage from "./components/TransitionPage";
+import HomePage from "./components/HomePage";
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "./components/ThemeProvider"; 
+import { ThemeProvider } from "./components/ThemeProvider";
 import "./App.css";
 
 function AppContent() {
@@ -22,12 +22,12 @@ function AppContent() {
   const recipeDisplayRef = useRef(null);
 
   const location = useLocation();
-  const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition"; 
+  const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition";
 
   useEffect(() => () => closeEventStream(), []);
 
   useEffect(() => {
-    if (recipeData) { 
+    if (recipeData) {
       closeEventStream();
       initializeEventStream();
       recipeDisplayRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -76,8 +76,9 @@ function AppContent() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/recipes/save", 
-        { recipeText }, 
+      const response = await axios.post(
+        "http://localhost:3001/api/recipes/save",
+        { recipeText },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
 
@@ -114,28 +115,26 @@ function AppContent() {
           <Route path="/" element={<IntroPage />} />
           <Route path="/transition" element={<TransitionPage />} />
 
-          {/* ✅ Home Page - No Navbar, No Header */}
-          <Route path="/home" element={
-            <>
-              <HomePage user={user} onLogout={handleLogout} />
-              <Hero onRecipeSubmit={handleRecipeSubmit} />
-              <div ref={recipeDisplayRef}>
-                <RecipeDisplay error={error} recipeText={recipeText} />
-                {recipeText && (
-                  <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
-                    Save Recipe
-                  </button>
-                )}
-              </div>
-            </>
-          } />
+          {/* ✅ Home Page - Only ONE Recipe Generator */}
+          <Route
+            path="/home"
+            element={
+              <HomePage user={user} onLogout={handleLogout}>
+                <Hero onRecipeSubmit={handleRecipeSubmit} />
+                <div ref={recipeDisplayRef} className="mt-6">
+                  <RecipeDisplay error={error} recipeText={recipeText} />
+                  {recipeText && (
+                    <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
+                      Save Recipe
+                    </button>
+                  )}
+                </div>
+              </HomePage>
+            }
+          />
 
           {/* ✅ Dashboard for Registered Users Only */}
-          {user ? (
-            <Route path="/dashboard" element={<Dashboard user={user} />} />
-          ) : (
-            <Route path="/dashboard" element={<Navigate to="/login" />} />
-          )}
+          {user ? <Route path="/dashboard" element={<Dashboard user={user} />} /> : <Route path="/dashboard" element={<Navigate to="/login" />} />}
 
           {/* ✅ Login & Register */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />

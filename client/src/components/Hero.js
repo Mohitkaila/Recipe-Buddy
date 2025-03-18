@@ -92,7 +92,7 @@ const RecipeCard = ({ onSubmit }) => {
 
 const Hero = ({ onRecipeSubmit }) => {
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen px-4">
+    <section className="flex flex-col items-center justify-start min-h-[50vh] px-4 pt-4">
       <RecipeCard onSubmit={onRecipeSubmit} />
     </section>
   );
