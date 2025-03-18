@@ -3,8 +3,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-const router = express.Router();  
+const router = express.Router();
 
+// ✅ Register Route
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -18,14 +19,14 @@ router.post("/register", async (req, res) => {
     const newUser = new User({ username, email, password: hashedPassword });
     await newUser.save();
 
-    return res.status(201).json({ message: "User registered successfully!" });
+    res.status(201).json({ message: "User registered successfully!" });
   } catch (err) {
     console.error("Registration Error:", err);
     res.status(500).json({ error: "Server error. Please try again." });
   }
 });
 
-
+// ✅ Login Route
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -45,4 +46,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

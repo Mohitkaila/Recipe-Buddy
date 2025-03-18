@@ -1,6 +1,5 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const authMiddleware = require("../middleware/auth"); // Middleware to check if user is logged in
+const authMiddleware = require("../middleware/auth"); // ✅ Corrected path
 const Recipe = require("../models/Recipe");
 
 const router = express.Router();
@@ -9,7 +8,7 @@ const router = express.Router();
 router.post("/save", authMiddleware, async (req, res) => {
   try {
     const { recipeText } = req.body;
-    const userId = req.user.userId; // Extract userId from JWT
+    const userId = req.user.userId; // ✅ Extracted from the verified JWT
 
     if (!recipeText) {
       return res.status(400).json({ error: "Recipe text is required." });
@@ -28,7 +27,7 @@ router.post("/save", authMiddleware, async (req, res) => {
 // ✅ Get Saved Recipes (Only for Logged-In Users)
 router.get("/saved", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.userId; // Extract userId from JWT
+    const userId = req.user.userId;
     const recipes = await Recipe.find({ userId });
 
     res.json(recipes);

@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline'
 import logo from '../assets/logo.svg'
 
-export default function Header({ onRegisterClick }) {
+export default function Header({ user, onLogout, onRegisterClick }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
@@ -28,6 +28,8 @@ export default function Header({ onRegisterClick }) {
           </a>
           <span className="ml-3 text-xl font-bold text-gray-900">Recipe Buddy</span>
         </div>
+        
+        {/* ✅ Mobile Menu Button */}
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -38,21 +40,32 @@ export default function Header({ onRegisterClick }) {
             <Bars3Icon aria-hidden="true" className="h-6 w-6" />
           </button>
         </div>
+
+        {/* ✅ Navbar Links - Desktop */}
         <div className="hidden lg:flex lg:gap-x-12">
-          <a href="#" className="text-sm font-semibold text-gray-900">
-            Sign In
-          </a>
-          <a href="#" className="text-sm font-semibold text-gray-900">
-            Contact
-          </a>
-          <button
-            onClick={onRegisterClick}
-            className="text-sm font-semibold text-gray-900"
-          >
-            Register
-          </button>
+          {user ? (
+            <>
+              <button
+                onClick={onLogout}
+                className="text-sm font-semibold text-red-600 hover:text-red-800"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={onRegisterClick}
+                className="text-sm font-semibold text-gray-900"
+              >
+                Register
+              </button>
+            </>
+          )}
         </div>
       </nav>
+
+      {/* ✅ Mobile Menu */}
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-10" />
         <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
@@ -77,27 +90,27 @@ export default function Header({ onRegisterClick }) {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Sign In
-                </a>
-                <a
-                  href="#"
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Contact
-                </a>
-                <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    onRegisterClick();
-                  }}
-                  className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Register
-                </button>
+                {user ? (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onLogout();
+                    }}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-red-600 hover:bg-gray-50"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      onRegisterClick();
+                    }}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Register
+                  </button>
+                )}
               </div>
             </div>
           </div>

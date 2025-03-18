@@ -7,7 +7,7 @@ const RecipeDisplay = ({ recipeText, user }) => {
   const handleSaveRecipe = async () => {
     if (!user) {
       alert("You must be logged in to save recipes!");
-      navigate("/login"); 
+      navigate("/login"); // Redirect to login
       return;
     }
 
@@ -34,14 +34,20 @@ const RecipeDisplay = ({ recipeText, user }) => {
   };
 
   return (
-    <div>
-      <h2>Generated Recipe:</h2>
-      <p>{recipeText}</p>
+    <div className="p-4 bg-white shadow-md rounded">
+      <h2 className="text-xl font-bold mb-2">Generated Recipe:</h2>
+      <p className="whitespace-pre-line">{recipeText}</p>
 
+      {/* ✅ Show "Save Recipe" Button Only for Logged-in Users */}
       {user ? (
-        <button onClick={handleSaveRecipe}>Save Recipe</button>
+        <button
+          onClick={handleSaveRecipe}
+          className="mt-4 p-2 bg-green-500 text-white rounded"
+        >
+          Save Recipe
+        </button>
       ) : (
-        <button onClick={() => navigate("/login")}>Login to Save</button>
+        <p className="text-red-500 mt-4">Login to Save</p>
       )}
     </div>
   );
