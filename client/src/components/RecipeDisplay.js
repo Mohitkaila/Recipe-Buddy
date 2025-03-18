@@ -1,47 +1,47 @@
 import React from "react";
-import { jsPDF } from "jspdf";
+import { useNavigate } from "react-router-dom";
 
-const RecipeDisplay = ({ error, recipeText }) => {
-  const formatText = (text) => {
-    return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-  };
+const RecipeDisplay = ({ recipeText, user }) => {
+  const navigate = useNavigate();
 
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const recipeContent = recipeText.replace(/\*\*(.*?)\*\*/g, "$1");
+  const handleSaveRecipe = async () => {
+    if (!user) {
+      alert("You must be logged in to save recipes!");
+      navigate("/login"); 
+      return;
+    }
 
-    // Set up PDF content
-    doc.setFontSize(16);
-    doc.text("Generated Recipe", 10, 10);
+    try {
+      const response = await fetch("http://localhost:3001/api/recipes/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ recipeText }),
+      });
 
-    // Split the content into lines and add to PDF
-    const lines = doc.splitTextToSize(recipeContent, 180);
-    doc.setFontSize(12);
-    doc.text(lines, 10, 20);
-
-    // Save the PDF
-    doc.save("Recipe.pdf");
+      const data = await response.json();
+      if (response.ok) {
+        alert("✅ Recipe saved successfully!");
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      alert("❌ Could not save recipe. Try again later.");
+    }
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-8 py-6 md:px-16 md:py-10 lg:py-10 bg-white rounded-lg shadow-lg text-sm text-gray-700">
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {recipeText ? (
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">Generated Recipe</h2>
-          <p
-            className="whitespace-pre-line"
-            dangerouslySetInnerHTML={{ __html: formatText(recipeText) }}
-          />
-          <button
-            onClick={generatePDF}
-            className="mt-4 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
-          >
-            Download as PDF
-          </button>
-        </div>
+    <div>
+      <h2>Generated Recipe:</h2>
+      <p>{recipeText}</p>
+
+      {user ? (
+        <button onClick={handleSaveRecipe}>Save Recipe</button>
       ) : (
-        <p>No recipe available at the moment. Please submit your request above. Your result may take up to 30 seconds to appear. Enjoy your cooking time!</p>
+        <button onClick={() => navigate("/login")}>Login to Save</button>
       )}
     </div>
   );

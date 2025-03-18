@@ -21,12 +21,15 @@ mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log("Connected to MongoDB Atlas!"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+  .then(() => console.log("✅ Connected to MongoDB Atlas!"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-// Import authentication routes
+// Import routes
 const authRoutes = require("./routes/auth");
+const recipeRoutes = require("./routes/recipes"); // ✅ Import Recipe Routes
+
 app.use("/api/auth", authRoutes);
+app.use("/api/recipes", recipeRoutes); // ✅ Add Recipe Routes
 
 // SSE Recipe Generation Endpoint (Existing Logic)
 app.get("/recipeStream", (req, res) => {
@@ -112,9 +115,9 @@ async function fetchOpenAICompletionsStream(messages, callback) {
       callback(chunk);
     }
   } catch (error) {
-    console.error("Error fetching data from OpenAI API:", error);
+    console.error("❌ Error fetching data from OpenAI API:", error);
   }
 }
 
 // Start the server
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

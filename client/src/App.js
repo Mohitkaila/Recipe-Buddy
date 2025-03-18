@@ -7,6 +7,8 @@ import Hero from "./components/Hero";
 import Register from "./components/Register";
 import Login from "./components/Login";
 import HomePage from "./components/HomePage";
+import Dashboard from "./components/Dashboard"; // ✅ Added Dashboard
+import Navbar from "./components/Navbar"; // ✅ Added Navbar
 import "./App.css";
 
 function App() {
@@ -65,18 +67,38 @@ function App() {
     setShowRegister(false);
   };
 
-  const handleSaveRecipe = () => {
-    setSavedRecipes((prev) => [...prev, recipeText]);
+  // ✅ Handle Save Recipe - Saves recipe to database if user is logged in
+  const handleSaveRecipe = async () => {
+    if (!user) {
+      alert("You must be logged in to save recipes!");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:3001/api/recipes/save", 
+        { recipeText }, 
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+
+      if (response.status === 201) {
+        alert("✅ Recipe saved successfully!");
+      } else {
+        alert("❌ Failed to save recipe.");
+      }
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+      alert("❌ Could not save recipe.");
+    }
   };
 
-  // 🔹 Handle Login Success
+  // ✅ Handle Login Success - Updates user state and saves token
   const handleLoginSuccess = (receivedToken, userInfo) => {
     setUser(userInfo);
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
   };
 
-  // 🔹 Handle Logout
+  // ✅ Handle Logout - Clears user state and storage
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("token");
@@ -85,47 +107,41 @@ function App() {
 
   return (
     <Router>
+      <Navbar user={user} onLogout={handleLogout} /> {/* ✅ Navbar added */}
+
       <div className="bg-gray-100">
         <Header onRegisterClick={() => setShowRegister(true)} />
 
         <Routes>
-          {/* 🔹 If user is logged in, show the main home page */}
+          {/* ✅ Home Page (Accessible by both guests and users) */}
+          <Route path="/" element={
+            <>
+              <HomePage user={user} onLogout={handleLogout} />
+              <Hero onRecipeSubmit={handleRecipeSubmit} />
+              <div ref={recipeDisplayRef}>
+                <RecipeDisplay error={error} recipeText={recipeText} />
+                {recipeText && (
+                  <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
+                    Save Recipe
+                  </button>
+                )}
+              </div>
+            </>
+          } />
+
+          {/* ✅ Dashboard for Registered Users Only */}
           {user ? (
-            <>
-              <Route path="/" element={
-                <>
-                  <HomePage user={user} onLogout={handleLogout} />
-                  <Hero onRecipeSubmit={handleRecipeSubmit} />
-                  <div ref={recipeDisplayRef}>
-                    <RecipeDisplay error={error} recipeText={recipeText} />
-                    {recipeText && (
-                      <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
-                        Save Recipe
-                      </button>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h2 className="text-xl font-bold mb-4">Saved Recipes</h2>
-                    <ul>
-                      {savedRecipes.map((recipe, index) => (
-                        <li key={index} className="mb-2 p-2 border border-gray-300 rounded">
-                          {recipe}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              } />
-              <Route path="*" element={<Navigate to="/" />} />
-            </>
+            <Route path="/dashboard" element={<Dashboard user={user} />} />
           ) : (
-            <>
-              {/* 🔹 If user is not logged in, show Login & Register */}
-              <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-              <Route path="/register" element={<Register onRegister={handleRegister} />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </>
+            <Route path="/dashboard" element={<Navigate to="/login" />} />
           )}
+
+          {/* ✅ Login & Register Routes */}
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/register" element={<Register onRegister={handleRegister} />} />
+
+          {/* ✅ Default Redirects */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
     </Router>
