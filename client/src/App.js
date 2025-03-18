@@ -2,28 +2,25 @@ import React, { useState, useRef, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import RecipeDisplay from "./components/RecipeDisplay";
-import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Register from "./components/Register";
 import Login from "./components/Login";
-import IntroPage from "./components/IntroPage"; // ✅ First page
-import TransitionPage from "./components/TransitionPage"; // ✅ New transition page
-import HomePage from "./components/HomePage";  // ✅ Futuristic UI page
+import IntroPage from "./components/IntroPage"; 
+import TransitionPage from "./components/TransitionPage"; 
+import HomePage from "./components/HomePage";  
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
+import { ThemeProvider } from "./components/ThemeProvider"; 
 import "./App.css";
 
 function AppContent() {
   const [recipeData, setRecipeData] = useState(null);
-  const [recipeText, setRecipeText] = useState('');
+  const [recipeText, setRecipeText] = useState("");
   const [error, setError] = useState(null);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const [showRegister, setShowRegister] = useState(false);
   const eventSourceRef = useRef(null);
   const recipeDisplayRef = useRef(null);
 
-  // ✅ Move `useLocation()` inside `Router`
   const location = useLocation();
   const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition"; 
 
@@ -44,7 +41,7 @@ function AppContent() {
 
     eventSourceRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.action === 'close') {
+      if (data.action === "close") {
         closeEventStream();
       } else if (data.chunk) {
         setRecipeText((prev) => prev + data.chunk);
@@ -52,8 +49,8 @@ function AppContent() {
     };
 
     eventSourceRef.current.onerror = (error) => {
-      console.error('Error:', error);
-      setError('Connection issue.');
+      console.error("Error:", error);
+      setError("Connection issue.");
       closeEventStream();
     };
   };
@@ -64,16 +61,14 @@ function AppContent() {
 
   const handleRecipeSubmit = (data) => {
     setRecipeData(data);
-    setRecipeText('');
+    setRecipeText("");
     setError(null);
   };
 
   const handleRegister = (userData) => {
     setUser(userData);
-    setShowRegister(false);
   };
 
-  // ✅ Handle Save Recipe - Saves recipe to database if user is logged in
   const handleSaveRecipe = async () => {
     if (!user) {
       alert("You must be logged in to save recipes!");
@@ -97,14 +92,12 @@ function AppContent() {
     }
   };
 
-  // ✅ Handle Login Success - Updates user state and saves token
   const handleLoginSuccess = (receivedToken, userInfo) => {
     setUser(userInfo);
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
   };
 
-  // ✅ Handle Logout - Clears user state and storage
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("token");
@@ -112,20 +105,16 @@ function AppContent() {
   };
 
   return (
-    <>
-      {/* ✅ Show Navbar and Header ONLY if NOT on IntroPage or TransitionPage */}
+    <ThemeProvider>
+      {/* ✅ Hide Navbar on Intro & Transition Pages */}
       {!isIntroOrTransition && <Navbar user={user} onLogout={handleLogout} />}
-      {!isIntroOrTransition && <Header onRegisterClick={() => setShowRegister(true)} />}
 
-      <div className="bg-gray-100">
+      <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
         <Routes>
-          {/* ✅ Show the IntroPage first (without header/navbar) */}
           <Route path="/" element={<IntroPage />} />
-
-          {/* ✅ Transition Page (shows animation before HomePage) */}
           <Route path="/transition" element={<TransitionPage />} />
 
-          {/* ✅ Home Page after transition */}
+          {/* ✅ Home Page - No Navbar, No Header */}
           <Route path="/home" element={
             <>
               <HomePage user={user} onLogout={handleLogout} />
@@ -148,7 +137,7 @@ function AppContent() {
             <Route path="/dashboard" element={<Navigate to="/login" />} />
           )}
 
-          {/* ✅ Login & Register Routes */}
+          {/* ✅ Login & Register */}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/register" element={<Register onRegister={handleRegister} />} />
 
@@ -156,11 +145,11 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
-    </>
+    </ThemeProvider>
   );
 }
 
-// ✅ Wrap everything inside `Router` to avoid errors
+// ✅ Wrap inside Router to prevent errors
 function App() {
   return (
     <Router>
