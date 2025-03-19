@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import RecipeDisplay from "./components/RecipeDisplay";
 import Hero from "./components/Hero";
@@ -10,7 +10,6 @@ import TransitionPage from "./components/TransitionPage";
 import HomePage from "./components/HomePage";
 import Dashboard from "./components/Dashboard";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "./components/ThemeProvider";
 import "./App.css";
 
 function AppContent() {
@@ -21,8 +20,9 @@ function AppContent() {
   const [loading, setLoading] = useState(false);
   const eventSourceRef = useRef(null);
   const recipeDisplayRef = useRef(null);
-
   const location = useLocation();
+  const navigate = useNavigate(); // ✅ Moved `useNavigate()` inside the component
+
   const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition";
 
   useEffect(() => () => closeEventStream(), []);
@@ -102,18 +102,22 @@ function AppContent() {
     setUser(userInfo);
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
+
+    navigate("/home"); // ✅ Redirect to home page after login
   };
 
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
+    navigate("/"); // ✅ Redirect to intro page after logout
   };
 
   return (
-    <ThemeProvider>
+    <>
       {!isIntroOrTransition && <Navbar user={user} onLogout={handleLogout} />}
-      <div className="bg-gray-100 dark:bg-gray-900 min-h-screen">
+      <div className="bg-gray-900 text-white min-h-screen"> {/* ✅ Dark mode applied everywhere */}
         <Routes>
           <Route path="/" element={<IntroPage />} />
           <Route path="/transition" element={<TransitionPage />} />
@@ -121,21 +125,17 @@ function AppContent() {
             path="/home"
             element={
               <HomePage user={user} onLogout={handleLogout}>
-                {/* ✅ Show Form Only If Recipe Isn't Loaded */}
                 {!recipeData && <Hero onRecipeSubmit={handleRecipeSubmit} />}
-                
-                {/* ✅ Show Loading Message While Waiting */}
+
                 {loading && (
                   <div className="mt-4 p-4 text-white bg-gray-800 rounded-lg text-center">
                     ⏳ Please wait, generating your recipe...
                   </div>
                 )}
 
-                {/* ✅ Show Recipe Only After It's Ready */}
                 <div ref={recipeDisplayRef} className="mt-6">
                   {!loading && recipeText && <RecipeDisplay error={error} recipeText={recipeText} />}
-                  
-                  {/* ✅ Display Buttons After Recipe Loads */}
+
                   {!loading && recipeText && (
                     <div className="flex justify-center gap-4 mt-4">
                       <button onClick={handleSaveRecipe} className="p-2 bg-green-500 text-white rounded">
@@ -156,7 +156,7 @@ function AppContent() {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
-    </ThemeProvider>
+    </>
   );
 }
 

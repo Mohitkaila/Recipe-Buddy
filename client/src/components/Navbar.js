@@ -1,32 +1,42 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { useTheme } from "./ThemeProvider";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = ({ user, onLogout }) => {
-  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   return (
-    <nav className="flex justify-between items-center p-4 shadow-md bg-white dark:bg-gray-900 dark:text-white">
-      <div className="flex items-center space-x-4">
-        <Link to="/" className="text-lg font-semibold">Home</Link>
+    <nav className="bg-gray-800 text-white p-4 flex justify-between items-center">
+      {/* Left Side: Brand Name */}
+      <Link to="/home" className="text-xl font-bold hover:text-gray-300 transition">
+        Recipe Buddy
+      </Link>
 
+      {/* Right Side: Navigation Links */}
+      <div className="flex gap-4">
+        <Link to="/home" className="px-4 py-2 hover:text-gray-300 transition">
+          Home
+        </Link>
+        {user && (
+          <Link to="/dashboard" className="px-4 py-2 hover:text-gray-300 transition">
+            Dashboard
+          </Link>
+        )}
         {user ? (
-          <>
-            <Link to="/dashboard" className="text-lg">Dashboard</Link>
-            <button onClick={onLogout} className="text-lg text-red-500">Logout</button>
-          </>
+          <button
+            onClick={() => {
+              onLogout();
+              navigate("/"); // ✅ Redirect to intro page on logout
+            }}
+            className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
+          >
+            Logout
+          </button>
         ) : (
-          <Link to="/login" className="text-lg">Login</Link>
+          <Link to="/login" className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg transition">
+            Login
+          </Link>
         )}
       </div>
-
-      {/* ✅ Theme Toggle Button */}
-      <button
-        onClick={toggleTheme}
-        className="p-2 rounded bg-gray-200 dark:bg-gray-700 dark:text-white"
-      >
-        {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
-      </button>
     </nav>
   );
 };

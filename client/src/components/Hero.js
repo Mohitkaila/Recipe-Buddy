@@ -52,11 +52,11 @@ const Hero = ({ onRecipeSubmit }) => {
   };
 
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen px-4">
+    <section className="flex flex-col items-center justify-center min-h-screen px-4 bg-gray-900 text-white">
       {/* ✅ Step 1: Recipe Generator Form */}
       {step === "form" && (
-        <div className="flex flex-col gap-4 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg max-w-md w-full">
-          <h2 className="text-3xl font-semibold text-gray-800 dark:text-white text-center">Recipe Generator</h2>
+        <div className="flex flex-col gap-4 bg-gray-800 p-8 rounded-xl shadow-lg max-w-md w-full border border-gray-700">
+          <h2 className="text-3xl font-semibold text-white text-center">Recipe Generator</h2>
           <div className="space-y-4">
             {[
               { label: "Ingredients", id: "ingredients", type: "text", placeholder: "e.g., chicken, rice" },
@@ -67,13 +67,13 @@ const Hero = ({ onRecipeSubmit }) => {
               { label: "Number of People", id: "people", type: "number", placeholder: "e.g., 4" },
             ].map(({ label, id, type, options, placeholder }) => (
               <div key={id}>
-                <label className="block text-gray-700 dark:text-gray-300 font-medium mb-1" htmlFor={id}>{label}</label>
+                <label className="block text-gray-300 font-medium mb-1" htmlFor={id}>{label}</label>
                 {type === "select" ? (
                   <select
                     id={id}
                     value={formData[id]}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+                    className="w-full border border-gray-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-700 text-white"
                   >
                     <option value="">Select {label.toLowerCase()}</option>
                     {options.map((option) => (
@@ -87,7 +87,7 @@ const Hero = ({ onRecipeSubmit }) => {
                     placeholder={placeholder}
                     value={formData[id]}
                     onChange={handleChange}
-                    className="w-full border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white"
+                    className="w-full border border-gray-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-gray-700 text-white"
                   />
                 )}
               </div>
@@ -104,14 +104,14 @@ const Hero = ({ onRecipeSubmit }) => {
 
       {/* ✅ Step 2: Waiting Screen */}
       {step === "loading" && (
-        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center">
+        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center border border-gray-700">
           ⏳ Please wait, generating your recipe...
         </div>
       )}
 
       {/* ✅ Step 3: Generated Recipe */}
       {step === "result" && (
-        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center w-full max-w-lg">
+        <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center w-full max-w-lg border border-gray-700">
           <p>✅ Your Recipe is Ready!</p>
           <button
             onClick={handleGenerateAnother}

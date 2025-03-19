@@ -1,13 +1,13 @@
 import React from "react";
 import { Boxes } from "./ui/BackgroundBoxes"; // ✅ Ensure correct import
 
-const HomePage = ({ user, onLogout, children }) => {
+const HomePage = ({ user, children }) => {
   return (
     <div className="relative bg-gray-900 text-white min-h-screen">
       {/* ✅ Top Section with Animated Background */}
-      <div className="relative w-full h-[60vh] flex flex-col items-center justify-center overflow-hidden bg-slate-900 rounded-lg">
+      <div className="relative w-full h-[50vh] flex flex-col items-center justify-center overflow-hidden bg-gray-900 rounded-lg">
         {/* ✅ Apply Mask for Smooth Visual Effect */}
-        <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+        <div className="absolute inset-0 w-full h-full bg-gray-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
         
         {/* ✅ Background Boxes */}
         <Boxes />
@@ -22,7 +22,7 @@ const HomePage = ({ user, onLogout, children }) => {
       </div>
 
       {/* ✅ Recipe Generator Section - Reduced Space */}
-      <div className="relative z-10 bg-gray-100 dark:bg-gray-900 py-6 flex justify-center">
+      <div className="relative z-10 bg-gray-900 py-6 flex justify-center">
         {children} {/* ✅ Injects the Hero Component */}
       </div>
     </div>
