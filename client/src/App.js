@@ -1,73 +1,79 @@
 import React, { useState, useRef, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import RecipeDisplay from "./components/RecipeDisplay";
-import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import IntroPage from "./components/IntroPage";
+import TransitionPage from "./components/TransitionPage";
 import HomePage from "./components/HomePage";
-import Dashboard from "./components/Dashboard"; // ✅ Added Dashboard
-import Navbar from "./components/Navbar"; // ✅ Added Navbar
+import Dashboard from "./components/Dashboard";
+import Navbar from "./components/Navbar";
 import "./App.css";
 
-function App() {
+function AppContent() {
   const [recipeData, setRecipeData] = useState(null);
-  const [recipeText, setRecipeText] = useState('');
+  const [recipeText, setRecipeText] = useState("");
   const [error, setError] = useState(null);
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")) || null);
-  const [savedRecipes, setSavedRecipes] = useState([]);
-  const [showRegister, setShowRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
   const eventSourceRef = useRef(null);
   const recipeDisplayRef = useRef(null);
+  const location = useLocation();
+  const navigate = useNavigate(); // ✅ Moved `useNavigate()` inside the component
+
+  const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition";
 
   useEffect(() => () => closeEventStream(), []);
 
   useEffect(() => {
-    if (recipeData) { 
+    if (recipeData) {
+      setLoading(true);
+      setRecipeText(""); // Reset previous recipe
       closeEventStream();
-      initializeEventStream();
-      recipeDisplayRef.current?.scrollIntoView({ behavior: "smooth" });
+
+      const queryParams = new URLSearchParams(recipeData).toString();
+      const url = `https://recipegenerator-n26b.onrender.com/recipeStream?${queryParams}`;
+      eventSourceRef.current = new EventSource(url);
+
+      eventSourceRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.action === "close") {
+          closeEventStream();
+          setLoading(false);
+        } else if (data.chunk) {
+          setRecipeText((prev) => prev + data.chunk);
+        }
+      };
+
+      eventSourceRef.current.onerror = (error) => {
+        console.error("Error:", error);
+        setError("Connection issue.");
+        setLoading(false);
+        closeEventStream();
+      };
     }
   }, [recipeData]);
-
-  const initializeEventStream = () => {
-    const queryParams = new URLSearchParams(recipeData).toString();
-    const url = `https://recipegenerator-n26b.onrender.com/recipeStream?${queryParams}`;
-    eventSourceRef.current = new EventSource(url);
-
-    eventSourceRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.action === 'close') {
-        closeEventStream();
-      } else if (data.chunk) {
-        setRecipeText((prev) => prev + data.chunk);
-      }
-    };
-
-    eventSourceRef.current.onerror = (error) => {
-      console.error('Error:', error);
-      setError('Connection issue.');
-      closeEventStream();
-    };
-  };
 
   const closeEventStream = () => {
     if (eventSourceRef.current) eventSourceRef.current.close();
   };
 
   const handleRecipeSubmit = (data) => {
-    setRecipeData(data);
-    setRecipeText('');
+    setRecipeData(data); // ✅ API request starts immediately
+  };
+
+  const handleGenerateAnother = () => {
+    setRecipeData(null);
+    setRecipeText("");
     setError(null);
   };
 
   const handleRegister = (userData) => {
     setUser(userData);
-    setShowRegister(false);
   };
 
-  // ✅ Handle Save Recipe - Saves recipe to database if user is logged in
   const handleSaveRecipe = async () => {
     if (!user) {
       alert("You must be logged in to save recipes!");
@@ -75,8 +81,9 @@ function App() {
     }
 
     try {
-      const response = await axios.post("http://localhost:3001/api/recipes/save", 
-        { recipeText }, 
+      const response = await axios.post(
+        "http://localhost:3001/api/recipes/save",
+        { recipeText },
         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
       );
 
@@ -91,59 +98,72 @@ function App() {
     }
   };
 
-  // ✅ Handle Login Success - Updates user state and saves token
   const handleLoginSuccess = (receivedToken, userInfo) => {
     setUser(userInfo);
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
+
+    navigate("/home"); // ✅ Redirect to home page after login
   };
 
-  // ✅ Handle Logout - Clears user state and storage
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+
+    navigate("/"); // ✅ Redirect to intro page after logout
   };
 
   return (
-    <Router>
-      <Navbar user={user} onLogout={handleLogout} /> {/* ✅ Navbar added */}
-
-      <div className="bg-gray-100">
-        <Header onRegisterClick={() => setShowRegister(true)} />
-
+    <>
+      {!isIntroOrTransition && <Navbar user={user} onLogout={handleLogout} />}
+      <div className="bg-gray-900 text-white min-h-screen"> {/* ✅ Dark mode applied everywhere */}
         <Routes>
-          {/* ✅ Home Page (Accessible by both guests and users) */}
-          <Route path="/" element={
-            <>
-              <HomePage user={user} onLogout={handleLogout} />
-              <Hero onRecipeSubmit={handleRecipeSubmit} />
-              <div ref={recipeDisplayRef}>
-                <RecipeDisplay error={error} recipeText={recipeText} />
-                {recipeText && (
-                  <button onClick={handleSaveRecipe} className="mt-4 p-2 bg-green-500 text-white rounded">
-                    Save Recipe
-                  </button>
+          <Route path="/" element={<IntroPage />} />
+          <Route path="/transition" element={<TransitionPage />} />
+          <Route
+            path="/home"
+            element={
+              <HomePage user={user} onLogout={handleLogout}>
+                {!recipeData && <Hero onRecipeSubmit={handleRecipeSubmit} />}
+
+                {loading && (
+                  <div className="mt-4 p-4 text-white bg-gray-800 rounded-lg text-center">
+                    ⏳ Please wait, generating your recipe...
+                  </div>
                 )}
-              </div>
-            </>
-          } />
 
-          {/* ✅ Dashboard for Registered Users Only */}
-          {user ? (
-            <Route path="/dashboard" element={<Dashboard user={user} />} />
-          ) : (
-            <Route path="/dashboard" element={<Navigate to="/login" />} />
-          )}
+                <div ref={recipeDisplayRef} className="mt-6">
+                  {!loading && recipeText && <RecipeDisplay error={error} recipeText={recipeText} />}
 
-          {/* ✅ Login & Register Routes */}
+                  {!loading && recipeText && (
+                    <div className="flex justify-center gap-4 mt-4">
+                      <button onClick={handleSaveRecipe} className="p-2 bg-green-500 text-white rounded">
+                        Save Recipe
+                      </button>
+                      <button onClick={handleGenerateAnother} className="p-2 bg-blue-500 text-white rounded">
+                        Generate Another Recipe
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </HomePage>
+            }
+          />
+          {user ? <Route path="/dashboard" element={<Dashboard user={user} />} /> : <Route path="/dashboard" element={<Navigate to="/login" />} />}
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/register" element={<Register onRegister={handleRegister} />} />
-
-          {/* ✅ Default Redirects */}
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </div>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

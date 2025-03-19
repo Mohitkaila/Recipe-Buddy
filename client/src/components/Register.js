@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Container, TextField, Button, Typography, Box } from "@mui/material";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -9,13 +8,13 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate(); // 🔹 Used for navigation
+  const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
-    
+
     try {
       const res = await axios.post("http://localhost:3001/api/auth/register", {
         username,
@@ -25,7 +24,7 @@ const Register = () => {
 
       if (res.status === 201) {
         setSuccess(true);
-        setTimeout(() => navigate("/login"), 2000); // 🔹 Redirect to login after 2s
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setError("Unexpected response from server.");
       }
@@ -35,54 +34,52 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box my={4}>
-        <Typography variant="h4" gutterBottom>Register</Typography>
+    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="p-8 bg-gray-800 text-white shadow-lg rounded-lg w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
-        {/* 🔹 Display success or error messages */}
-        {error && <Typography color="error">{error}</Typography>}
-        {success && <Typography color="primary">Registration successful! Redirecting to login...</Typography>}
+        {/* Success or Error Messages */}
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {success && <p className="text-green-500 text-center">Registration successful! Redirecting...</p>}
 
-        <form onSubmit={handleRegister}>
-          <TextField
-            label="Username"
-            fullWidth
-            margin="normal"
-            required
+        <form onSubmit={handleRegister} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            label="Email"
-            type="email"
-            fullWidth
-            margin="normal"
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
             required
+          />
+          <input
+            type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            margin="normal"
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
             required
+          />
+          <input
+            type="password"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
           />
-          
-          {/* 🔹 Buttons: Register & Go to Login */}
-          <Box mt={2} display="flex" justifyContent="space-between">
-            <Button variant="contained" color="primary" type="submit">
+
+          {/* Register & Go to Login Buttons */}
+          <div className="flex justify-between mt-4">
+            <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
               Register
-            </Button>
-            <Button variant="outlined" color="secondary" onClick={() => navigate("/login")}>
+            </button>
+            <button onClick={() => navigate("/login")} type="button" className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition">
               Go to Login
-            </Button>
-          </Box>
+            </button>
+          </div>
         </form>
-      </Box>
-    </Container>
+      </div>
+    </div>
   );
 };
 

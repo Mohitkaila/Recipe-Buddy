@@ -29,42 +29,44 @@ const Login = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded max-w-sm mx-auto">
-      <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="p-8 bg-gray-800 text-white shadow-lg rounded-lg w-full max-w-sm">
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-      {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
-      <form onSubmit={handleLogin} className="space-y-3">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded"
-          required
-        />
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">
-          Login
-        </button>
-      </form>
+        <form onSubmit={handleLogin} className="space-y-4">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <button type="submit" className="w-full p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
+            Login
+          </button>
+        </form>
 
-      {/* ✅ Register Button - Redirects to Register Page */}
-      <div className="text-center mt-4">
-        <p className="text-sm text-gray-600">Don't have an account?</p>
-        <button
-          onClick={() => navigate("/register")}
-          className="mt-2 p-2 bg-green-500 text-white rounded"
-        >
-          Register
-        </button>
+        {/* ✅ Register Button - Redirects to Register Page */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-gray-400">Don't have an account?</p>
+          <button
+            onClick={() => navigate("/register")}
+            className="mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition"
+          >
+            Register
+          </button>
+        </div>
       </div>
     </div>
   );

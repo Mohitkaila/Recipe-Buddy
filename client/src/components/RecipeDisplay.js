@@ -34,20 +34,24 @@ const RecipeDisplay = ({ recipeText, user }) => {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded">
-      <h2 className="text-xl font-bold mb-2">Generated Recipe:</h2>
-      <p className="whitespace-pre-line">{recipeText}</p>
+    <div className="max-w-3xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+      <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4 text-center">
+        Generated Recipe
+      </h2>
+      <p className="whitespace-pre-line text-lg text-gray-700 dark:text-gray-300 mb-4">{recipeText}</p>
 
       {/* ✅ Show "Save Recipe" Button Only for Logged-in Users */}
       {user ? (
-        <button
-          onClick={handleSaveRecipe}
-          className="mt-4 p-2 bg-green-500 text-white rounded"
-        >
-          Save Recipe
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={handleSaveRecipe}
+            className="mt-4 px-6 py-3 bg-green-500 text-white rounded-full text-lg transition-all hover:bg-green-600"
+          >
+            Save Recipe
+          </button>
+        </div>
       ) : (
-        <p className="text-red-500 mt-4">Login to Save</p>
+        <p className="text-center text-red-500 mt-4">Please log in to save your recipe.</p>
       )}
     </div>
   );
