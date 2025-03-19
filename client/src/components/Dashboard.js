@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { jsPDF } from "jspdf";
 
 const Dashboard = ({ user }) => {
   const [savedRecipes, setSavedRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const pdfRef = useRef();
 
   useEffect(() => {
     if (user) {
@@ -37,41 +39,87 @@ const Dashboard = ({ user }) => {
     }
   };
 
+  const handleDeleteRecipe = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/recipes/delete/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete recipe.");
+      }
+
+      setSavedRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe._id !== id));
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+      setError("Failed to delete recipe.");
+    }
+  };
+
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Saved Recipes", 10, 10);
+
+    savedRecipes.forEach((recipe, index) => {
+      doc.text(`${index + 1}. ${recipe.title || "Untitled Recipe"}`, 10, 20 + index * 10);
+    });
+
+    doc.save("Saved_Recipes.pdf");
+  };
+
   return (
-    <div className="p-4 bg-white shadow-md rounded">
-      <h1 className="text-2xl font-bold">Welcome, {user?.username || "Guest"}!</h1>
+    <div className="p-6 bg-gray-900 text-white rounded-lg shadow-lg min-h-screen">
+      <h1 className="text-3xl font-bold mb-4">Welcome, {user?.username || "Guest"}!</h1>
 
-      <h2 className="text-xl font-bold mb-2 mt-4">Saved Recipes</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Saved Recipes</h2>
+        <button
+          onClick={handleDownloadPDF}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+        >
+          📄 Download PDF
+        </button>
+      </div>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p className="text-gray-300">Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
-      {!loading && savedRecipes.length === 0 && <p>No saved recipes yet.</p>}
+      {!loading && savedRecipes.length === 0 && <p className="text-gray-400">No saved recipes yet.</p>}
 
       {!loading && savedRecipes.length > 0 && (
-        <ul className="space-y-2">
-          {savedRecipes.map((recipe, index) => (
-            <li key={index}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {savedRecipes.map((recipe) => (
+            <div key={recipe._id} className="p-4 bg-gray-800 rounded-lg shadow">
+              <h3 className="text-lg font-bold">{recipe.title || "Untitled Recipe"}</h3>
               <button
                 onClick={() => setSelectedRecipe(recipe)}
-                className="text-blue-600 hover:underline"
+                className="mt-2 px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
               >
-                {recipe.title ? recipe.title : "Untitled Recipe"}
+                View
               </button>
-            </li>
+              <button
+                onClick={() => handleDeleteRecipe(recipe._id)}
+                className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 ml-2"
+              >
+                Delete
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
 
       {selectedRecipe && (
-        <div className="mt-4 p-4 border border-gray-300 rounded">
-          <h3 className="text-lg font-bold">{selectedRecipe.title}</h3>
-          <p className="whitespace-pre-line">{selectedRecipe.recipeText}</p>
+        <div className="mt-6 p-6 bg-gray-800 rounded-lg shadow-lg">
+          <h3 className="text-xl font-bold">{selectedRecipe.title}</h3>
+          <p className="whitespace-pre-line mt-2">{selectedRecipe.recipeText}</p>
           <button
             onClick={() => setSelectedRecipe(null)}
-            className="mt-2 p-2 bg-gray-400 text-white rounded"
+            className="mt-4 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg"
           >
-            Close Recipe
+            Close
           </button>
         </div>
       )}
