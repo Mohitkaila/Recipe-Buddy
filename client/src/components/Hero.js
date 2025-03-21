@@ -30,15 +30,15 @@ const Hero = ({ onRecipeSubmit }) => {
       return;
     }
 
-    setStep("loading"); // ✅ Show loading state
+    setStep("loading"); // Show loading state
     setTimeout(() => {
-      setStep("result"); // ✅ Move to result screen after 30 seconds
-      onRecipeSubmit(formData); // ✅ Send data to App.js
+      setStep("result"); // Move to result screen after 30 seconds
+      onRecipeSubmit(formData); // Send data to App.js
     }, 30000);
   };
 
   const handleGenerateAnother = () => {
-    setStep("form"); // ✅ Reset UI to form
+    setStep("form"); // Reset UI to form
     setFormData({
       ingredients: "",
       mealType: "",
@@ -48,12 +48,12 @@ const Hero = ({ onRecipeSubmit }) => {
       people: "",
       note: "",
     });
-    onRecipeSubmit(null); // ✅ Ensure App.js resets
+    onRecipeSubmit(null); // Ensure App.js resets
   };
 
   return (
     <section className="flex flex-col items-center justify-center min-h-screen px-4 bg-gray-900 text-white">
-      {/* ✅ Step 1: Recipe Generator Form */}
+      {/* Recipe Generator Form */}
       {step === "form" && (
         <div className="flex flex-col gap-4 bg-gray-800 p-8 rounded-xl shadow-lg max-w-md w-full border border-gray-700">
           <h2 className="text-3xl font-semibold text-white text-center">Recipe Generator</h2>
@@ -102,14 +102,14 @@ const Hero = ({ onRecipeSubmit }) => {
         </div>
       )}
 
-      {/* ✅ Step 2: Waiting Screen */}
+      {/* Waiting Screen */}
       {step === "loading" && (
         <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center border border-gray-700">
           ⏳ Please wait, generating your recipe...
         </div>
       )}
 
-      {/* ✅ Step 3: Generated Recipe */}
+      {/* Generated Recipe */}
       {step === "result" && (
         <div className="p-6 bg-gray-800 text-white rounded-lg shadow-lg text-lg flex flex-col items-center w-full max-w-lg border border-gray-700">
           <p>✅ Your Recipe is Ready!</p>

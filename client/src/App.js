@@ -21,7 +21,7 @@ function AppContent() {
   const eventSourceRef = useRef(null);
   const recipeDisplayRef = useRef(null);
   const location = useLocation();
-  const navigate = useNavigate(); // ✅ Moved `useNavigate()` inside the component
+  const navigate = useNavigate(); // Moved `useNavigate()` inside the component
 
   const isIntroOrTransition = location.pathname === "/" || location.pathname === "/transition";
 
@@ -61,7 +61,7 @@ function AppContent() {
   };
 
   const handleRecipeSubmit = (data) => {
-    setRecipeData(data); // ✅ API request starts immediately
+    setRecipeData(data); // API request starts immediately
   };
 
   const handleGenerateAnother = () => {
@@ -103,7 +103,7 @@ function AppContent() {
     localStorage.setItem("token", receivedToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
 
-    navigate("/home"); // ✅ Redirect to home page after login
+    navigate("/home"); // Redirect to home page after login
   };
 
   const handleLogout = () => {
@@ -111,13 +111,13 @@ function AppContent() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
 
-    navigate("/"); // ✅ Redirect to intro page after logout
+    navigate("/"); // Redirect to intro page after logout
   };
 
   return (
     <>
       {!isIntroOrTransition && <Navbar user={user} onLogout={handleLogout} />}
-      <div className="bg-gray-900 text-white min-h-screen"> {/* ✅ Dark mode applied everywhere */}
+      <div className="bg-gray-900 text-white min-h-screen"> {/* Dark mode applied everywhere */}
         <Routes>
           <Route path="/" element={<IntroPage />} />
           <Route path="/transition" element={<TransitionPage />} />

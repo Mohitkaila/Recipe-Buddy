@@ -40,7 +40,7 @@ const RecipeDisplay = ({ recipeText, user }) => {
       </h2>
       <p className="whitespace-pre-line text-lg text-gray-700 dark:text-gray-300 mb-4">{recipeText}</p>
 
-      {/* ✅ Show "Save Recipe" Button Only for Logged-in Users */}
+      {/* Show "Save Recipe" Button Only for Logged-in Users */}
       {user ? (
         <div className="flex justify-center">
           <button

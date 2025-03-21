@@ -2,9 +2,9 @@ const express = require("express");
 const authMiddleware = require("../middleware/auth");
 const Recipe = require("../models/Recipe");
 
-const router = express.Router(); // ✅ Initialize Router
+const router = express.Router(); // Initialize Router
 
-// ✅ Save Recipe Route
+// Save Recipe Route
 router.post("/save", authMiddleware, async (req, res) => {
   try {
     const { recipeText } = req.body;
@@ -14,13 +14,13 @@ router.post("/save", authMiddleware, async (req, res) => {
       return res.status(400).json({ error: "Recipe text is required." });
     }
 
-    // ✅ Extract title from the first non-empty line
+    // Extract title from the first non-empty line
     const title = recipeText
       .split("\n")
       .map((line) => line.trim())
       .find((line) => line.length > 0) || "Untitled Recipe";
 
-    console.log("Extracted Title:", title); // ✅ Debugging Log
+    console.log("Extracted Title:", title); // Debugging Log
 
     const newRecipe = new Recipe({ userId, title, recipeText });
     await newRecipe.save();
@@ -32,7 +32,7 @@ router.post("/save", authMiddleware, async (req, res) => {
   }
 });
 
-// ✅ Get Saved Recipes
+// Get Saved Recipes
 router.get("/saved", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -45,4 +45,4 @@ router.get("/saved", authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router; // ✅ Export Router
+module.exports = router; // Export Router

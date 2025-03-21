@@ -29,7 +29,7 @@ export default function Header({ user, onLogout, onRegisterClick }) {
           <span className="ml-3 text-xl font-bold text-gray-900">Recipe Buddy</span>
         </div>
         
-        {/* ✅ Mobile Menu Button */}
+        {/* Mobile Menu Button */}
         <div className="flex lg:hidden">
           <button
             type="button"
@@ -41,7 +41,7 @@ export default function Header({ user, onLogout, onRegisterClick }) {
           </button>
         </div>
 
-        {/* ✅ Navbar Links - Desktop */}
+        {/* Navbar Links - Desktop */}
         <div className="hidden lg:flex lg:gap-x-12">
           {user ? (
             <>
@@ -65,7 +65,7 @@ export default function Header({ user, onLogout, onRegisterClick }) {
         </div>
       </nav>
 
-      {/* ✅ Mobile Menu */}
+      {/* Mobile Menu */}
       <Dialog open={mobileMenuOpen} onClose={setMobileMenuOpen} className="lg:hidden">
         <div className="fixed inset-0 z-10" />
         <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">

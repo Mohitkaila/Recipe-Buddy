@@ -90,7 +90,7 @@ export const WavyBackground = ({
 
   const [isSafari, setIsSafari] = useState(false);
   useEffect(() => {
-    // I'm sorry but i have got to support it on safari.
+    // support for safari
     setIsSafari(typeof window !== "undefined" &&
       navigator.userAgent.includes("Safari") &&
       !navigator.userAgent.includes("Chrome"));

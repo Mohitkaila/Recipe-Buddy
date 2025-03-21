@@ -6,7 +6,7 @@ const Login = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // ✅ Navigation Hook
+  const navigate = useNavigate(); // Navigation Hook
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,12 +16,12 @@ const Login = ({ onLoginSuccess }) => {
       const response = await axios.post("http://localhost:3001/api/auth/login", { email, password });
       const { token, user } = response.data;
 
-      // ✅ Save user & token
+      // Save user & token
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
       onLoginSuccess(token, user);
 
-      // ✅ Redirect to Home Page
+      // Redirect to Home Page
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
@@ -57,7 +57,7 @@ const Login = ({ onLoginSuccess }) => {
           </button>
         </form>
 
-        {/* ✅ Register Button - Redirects to Register Page */}
+        {/* Register Button - Redirects to Register Page */}
         <div className="text-center mt-6">
           <p className="text-sm text-gray-400">Don't have an account?</p>
           <button

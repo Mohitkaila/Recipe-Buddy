@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../assets/bg.jpg"; // ✅ Background image
+import bgImage from "../assets/bg.jpg"; // Background image
 
 export default function IntroPage() {
   const navigate = useNavigate();

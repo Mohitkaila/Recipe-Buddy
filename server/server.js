@@ -27,10 +27,10 @@ mongoose
 
 // Import routes
 const authRoutes = require("./routes/auth");
-const recipeRoutes = require("./routes/recipes"); // ✅ Import Recipe Routes
+const recipeRoutes = require("./routes/recipes"); // Import Recipe Routes
 
 app.use("/api/auth", authRoutes);
-app.use("/api/recipes", recipeRoutes); // ✅ Add Recipe Routes
+app.use("/api/recipes", recipeRoutes); // Add Recipe Routes
 
 // SSE Recipe Generation Endpoint (Fixed Title Handling)
 app.get("/recipeStream", (req, res) => {
@@ -52,7 +52,7 @@ app.get("/recipeStream", (req, res) => {
   // Include the note if provided by the user
   const customNote = note ? `Please ensure the recipe meets the following requirement: ${note}.` : "";
 
-  // ✅ Updated OpenAI Prompt (Ensures Clear Title Extraction)
+  // Updated OpenAI Prompt (Ensures Clear Title Extraction)
   const prompt = `
     Generate a recipe in a structured format. The first line **must** contain the dish name as follows:
     **Recipe Title:** [Dish Name]
@@ -87,7 +87,7 @@ app.get("/recipeStream", (req, res) => {
     Ensure the recipe starts with "**Recipe Title:** [Dish Name]".
   `;
 
-  console.log("🔍 Sending Prompt to OpenAI:", prompt); // ✅ Debugging Log
+  console.log("🔍 Sending Prompt to OpenAI:", prompt); // Debugging Log
 
   const messages = [
     { role: "system", content: "You are a recipe assistant that provides structured recipes in plain text format with bold headings." },
@@ -99,7 +99,7 @@ app.get("/recipeStream", (req, res) => {
   req.on("close", () => res.end());
 });
 
-// ✅ Function to Fetch AI Data and Debug Response
+// Function to Fetch AI Data and Debug Response
 async function fetchOpenAICompletionsStream(messages, callback) {
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -113,7 +113,7 @@ async function fetchOpenAICompletionsStream(messages, callback) {
     });
 
     for await (const chunk of completion) {
-      console.log("📝 AI Response Chunk:", chunk.choices[0].delta.content); // ✅ Debug AI Response
+      console.log("📝 AI Response Chunk:", chunk.choices[0].delta.content); // Debug AI Response
       callback(chunk);
     }
   } catch (error) {

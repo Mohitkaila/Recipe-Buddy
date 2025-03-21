@@ -25,7 +25,7 @@ const Navbar = ({ user, onLogout }) => {
           <button
             onClick={() => {
               onLogout();
-              navigate("/"); // ✅ Redirect to intro page on logout
+              navigate("/"); // Redirect to intro page on logout
             }}
             className="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg transition"
           >
