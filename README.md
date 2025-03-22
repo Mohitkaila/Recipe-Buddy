@@ -21,6 +21,8 @@
 - **Download as PDF**: Users can download generated recipes as a PDF file.
 - **User-Friendly Interface**: Clean and interactive design with responsive layout.
 - **3D Interactive Image**: Includes a dynamic 3D image effect to make the interface more engaging.
+- **User Authentication**: Allow users to save their favorite recipes.
+- **Nutrition Information**: Provide nutritional details for each recipe.
 
 ## Tech Stack
 
@@ -108,12 +110,5 @@ recipe-generator/
 ```
 
 ---
-
-## Future Enhancements
-
-- **User Authentication**: Allow users to save their favorite recipes.
-- **Nutrition Information**: Provide nutritional details for each recipe.
-- **Voice Commands**: Enable recipe generation through voice input.
-- **Ingredient Substitution Suggestions**: Recommend alternative ingredients if the user is missing any.
 
 
