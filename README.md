@@ -110,5 +110,8 @@ recipe-generator/
 ```
 
 ---
-
+## Generative AI Usage
+Generative AI, namely ChatGPT, assisted in developing this project. The tool was primarily utilized for debugging and giving example implementations for functions. Using ChatGPT was beneficial to our learning experience as well as our project since it allowed us to learn different ways to implement desired functionality and improve our overall project by identifying and removing errors. The only challenge we encountered while using AI was getting it to assist in debugging errors that were specific to our project since it often only gave a brief overview of errors and ways to fix them. 
+### Citation
+OpenAI. (2024). ChatGPT (March 21 version) [Large language model]. https://openai.com/chatgpt 
 
