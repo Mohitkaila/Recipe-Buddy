@@ -5,8 +5,7 @@
 ## Table of Contents
 
 - [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
+- [Tech Stack](#technologies used)
 - [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Future Enhancements](#future-enhancements)
@@ -41,45 +40,6 @@ To set up and run this project locally, follow these steps:
 
 - [Node.js](https://nodejs.org/) (version 14 or higher)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
-### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/ducbinhminhman/RecipeGenerator.git
-   cd recipe-generator
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables:**
-
-   Create a `.env` file in the root directory and add your OpenAI API key:
-
-   ```plaintext
-   OPENAI_API_KEY=your_openai_api_key
-   ```
-
-4. **Start the development server:**
-
-   ```bash
-   npm start
-   ```
-
-5. **Run the backend server:**
-
-   Open another terminal window and navigate to the `server` folder, then run:
-
-   ```bash
-   node server.js
-   ```
-
----
 
 ## Usage
 
